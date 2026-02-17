@@ -1,18 +1,19 @@
+# Declare the required library files 
 import streamlit as st
 import pandas as pd
 import altair as alt
 
-# --- Load Data ---
+# Load data and print the name as you want
 st.title("Vitamin A & D Screening Dashboard")
 st.write("Summary of persons screened across CHC/PHC facilities")
 
 summary = pd.read_csv("outputs/summary.csv")
 
-# --- Show Table ---
+# Show the summary table 
 st.subheader("Summary Table")
 st.dataframe(summary)
 
-# --- Bar Chart ---
+# Create a bar chart to show the persons Screened 
 st.subheader("Persons Screened per Facility")
 bar_chart = alt.Chart(summary[summary["Facility_Clean"] != "Total"]).mark_bar().encode(
     x=alt.X("Facility_Clean", sort="-y"),
@@ -21,7 +22,7 @@ bar_chart = alt.Chart(summary[summary["Facility_Clean"] != "Total"]).mark_bar().
 ).properties(width=700, height=400)
 st.altair_chart(bar_chart)
 
-# --- Pie Chart ---
+# Implement the pie chart to show the percentage
 st.subheader("Percentage of Total Screened")
 pie_chart = alt.Chart(summary[summary["Facility_Clean"] != "Total"]).mark_arc().encode(
     theta=alt.Theta("% Total Screened", type="quantitative"),
@@ -30,7 +31,7 @@ pie_chart = alt.Chart(summary[summary["Facility_Clean"] != "Total"]).mark_arc().
 ).properties(width=700, height=400)
 st.altair_chart(pie_chart)
 
-# --- Filters (optional extension) ---
+# Filters  extension the use of optional extension. It is create for individual data 
 st.subheader("Filter Options")
 facility_filter = st.multiselect("Select facilities to view:", summary["Facility_Clean"].unique())
 if facility_filter:

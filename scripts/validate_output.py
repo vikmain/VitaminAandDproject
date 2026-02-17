@@ -1,28 +1,30 @@
+# Import the pandas library
 import pandas as pd
 
-# --- Load dataset and summary ---
+# Load the dataset and summary 
 df = pd.read_excel("data/Assignment_Dataset.xlsx", sheet_name="Dataset")
 summary = pd.read_csv("outputs/summary.csv")
 
-# --- Load codebook for facility mapping ---
+# Load codebook for facility mapping 
 codebook = pd.read_excel("data/Assignment_Dataset.xlsx", sheet_name="Codebook")
 codebook.columns = codebook.columns.str.strip()
 
-# Map facility codes to English names
+# Map the facility codes to English names, it used for mapping 
 mapping = dict(zip(codebook["Options"], codebook["label::English (en)"]))
 df["Facility_Clean"] = df["health_facility"].map(mapping).fillna(df["health_facility"])
 
-# --- Convert Age & Risk Score ---
+# Convert Age & Risk Score  into numeric
 df["q7"] = pd.to_numeric(df["q7"], errors="coerce")
 df["q39"] = pd.to_numeric(df["q39"], errors="coerce")
 
-# --- Apply filters ---
+#  Apply filters  as per the given conditions
 filtered = df[
     df["q2"].astype(str).str.contains("yes", case=False, na=False) &
     (df["q7"] > 30) &
     (df["q39"] > 3)
 ]
 
+# Display the  validation report to validate what we doing is correct or not 
 print("=== VALIDATION REPORT ===")
 
 # 1. Check total filtered rows
@@ -43,5 +45,5 @@ for facility in summary["Facility_Clean"].unique():
 percent_sum = summary.loc[summary["Facility_Clean"] != "Total", "% Total Screened"].sum()
 print(f"Percentage sum (excluding Total): {percent_sum:.2f} -> {'PASS' if abs(percent_sum - 100) < 0.01 else 'FAIL'}")
 
-
+# Disaplay this message that we close the report after getting the result
 print("=== END REPORT ===")
